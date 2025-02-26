@@ -10,6 +10,8 @@ services:
     depends_on:
       - mimir
       - loki
+    networks:
+      - observability
 
   mimir:
     image: grafana/mimir:2.13.0
@@ -22,6 +24,8 @@ services:
       - "9009:9009"
     volumes:
       - "./conf/mimir.yaml:/etc/mimir.yaml"
+    networks:
+      - observability
 
   loki:
     image: grafana/loki:3.4
@@ -31,6 +35,8 @@ services:
       - "3100:3100"
     volumes:
       - "./conf/loki.yaml:/etc/loki/loki.yaml"
+    networks:
+      - observability
 
   grafana:
     image: grafana/grafana:latest
@@ -49,6 +55,8 @@ services:
       - mimir
       - loki
     user: root
+    networks:
+      - observability
 
   tempo:
     image: grafana/tempo:2.6.0
@@ -58,6 +66,8 @@ services:
       - "55681:55681"
       - "14250:14250"
     command: ["-config.file=/etc/tempo.yaml"]
+    networks:
+      - observability
     volumes:
       - "./conf/tempo.yaml:/etc/tempo.yaml"
 
@@ -66,6 +76,8 @@ services:
     ports:
       - "4040:4040"
     command: ["server"]
+    networks:
+      - observability
 
   #cadvisor:
   #  container_name: cadvisor
@@ -78,6 +90,10 @@ services:
   #    - "/sys:/sys:ro"
   #    - "/var/lib/docker/:/var/lib/docker:ro"
   #  restart: unless-stopped
+
+networks:
+  observability:
+    driver: bridge
 
 volumes:
   grafana-data:

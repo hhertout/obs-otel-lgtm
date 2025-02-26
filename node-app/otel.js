@@ -24,7 +24,7 @@ console.log(`🔗 Endpoint: ${endPoint}`)
 console.log(`📦 Service name: ${serviceName}`)
 console.log(`📝 Log enabled: ${logEnabled}`)
 console.log("")
-console.log("🔗 OpenTelemetry starting")
+console.log("⏳ OpenTelemetry starting...")
 
 const resource = new Resource({
     [ATTR_SERVICE_NAME]: serviceName || 'unknown-app',
