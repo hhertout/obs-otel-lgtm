@@ -20,8 +20,8 @@ services:
         "-ingester.native-histograms-ingestion-enabled=true",
         "-config.file=/etc/mimir.yaml",
       ]
-    ports:
-      - "9009:9009"
+    # ports:
+    #   - "9009:9009"
     volumes:
       - "./conf/mimir.yaml:/etc/mimir.yaml"
     networks:
@@ -31,8 +31,8 @@ services:
     image: grafana/loki:3.4
     command:
       ["--pattern-ingester.enabled=true", "-config.file=/etc/loki/loki.yaml"]
-    ports:
-      - "3100:3100"
+    # ports:
+    #   - "3100:3100"
     volumes:
       - "./conf/loki.yaml:/etc/loki/loki.yaml"
     networks:
@@ -60,11 +60,11 @@ services:
 
   tempo:
     image: grafana/tempo:2.6.0
-    ports:
-      - "3200:3200"
-      - "55680:55680"
-      - "55681:55681"
-      - "14250:14250"
+    # ports:
+    #   - "3200:3200"
+    #   - "55680:55680"
+    #   - "55681:55681"
+    #   - "14250:14250"
     command: ["-config.file=/etc/tempo.yaml"]
     networks:
       - observability
@@ -79,17 +79,34 @@ services:
     networks:
       - observability
 
-  #cadvisor:
-  #  container_name: cadvisor
-  #  image: google/cadvisor:latest
-  #  ports:
-  #    - "8080:8080"
-  #  volumes:
-  #    - "/:/rootfs:ro"
-  #    - "/var/run/docker.sock:/var/run/docker.sock:ro"
-  #    - "/sys:/sys:ro"
-  #    - "/var/lib/docker/:/var/lib/docker:ro"
-  #  restart: unless-stopped
+  # node_exporter:
+  #   image: prom/node-exporter:latest
+  #   command:
+  #     - "--path.rootfs=/host"
+  #     - "--no-collector.filesystem"
+  #   pid: host
+  #   volumes:
+  #     - "/proc:/host/proc:ro"
+  #     - "/sys:/host/sys:ro"
+  #     - "/:/host:ro"
+  #   networks:
+  #     - observability
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    restart: unless-stopped
+    networks:
+      - observability
 
 networks:
   observability:
