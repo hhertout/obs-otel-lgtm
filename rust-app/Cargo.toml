@@ -22,3 +22,6 @@ opentelemetry = { version = "0.28", features = ["trace", "logs"] }
 opentelemetry_sdk = { version = "0.28", features = ["rt-tokio-current-thread"] }
 opentelemetry-otlp = { version = "0.28", features = ["grpc-tonic"] }
 opentelemetry-appender-tracing = "0.28.1"
+pyroscope = "0.5.8"
+pyroscope_pprofrs = "0.2.8"
+dotenv = "0.15.0"

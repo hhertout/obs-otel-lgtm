@@ -4,7 +4,7 @@ const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-proto'
 const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-proto');
 const { OTLPLogExporter } = require('@opentelemetry/exporter-logs-otlp-proto');
 const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
-const { SimpleLogRecordProcessor, ConsoleLogRecordExporter } = require('@opentelemetry/sdk-logs');
+const { SimpleLogRecordProcessor } = require('@opentelemetry/sdk-logs');
 const { LoggerProvider } = require('@opentelemetry/sdk-logs');
 const { Resource } = require("@opentelemetry/resources");
 const { logs, SeverityNumber } = require('@opentelemetry/api-logs');
@@ -12,6 +12,7 @@ const {
     ATTR_SERVICE_NAME,
     ATTR_SERVICE_VERSION,
 } = require('@opentelemetry/semantic-conventions');
+const Pyroscope = require('@pyroscope/nodejs');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -102,11 +103,32 @@ const sdk = new NodeSDK({
     loggerProvider,
 });
 
+function startPyroscope() {
+    console.log('🔥 Pyroscope is enabled, starting...');
+
+    Pyroscope.init({
+        serverAddress: 'http://localhost:4040',
+        appName: process.env.OTEL_SERVICE_NAME,
+        // Enable CPU time collection for wall profiles
+        // This is required for CPU profiling functionality
+        wall: {
+            collectCpuTime: true
+        },
+        tags: {
+            env: process.env.NODE_ENV
+        },
+    });
+
+    Pyroscope.start();
+}
+
 
 
 try {
     console.log('🚀 OpenTelemetry started');
     sdk.start()
+
+    startPyroscope();
 } catch (error) {
     console.error(error);
     process.exit(1);
