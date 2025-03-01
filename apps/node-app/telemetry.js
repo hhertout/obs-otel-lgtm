@@ -107,7 +107,7 @@ function startPyroscope() {
     console.log('🔥 Pyroscope is enabled, starting...');
 
     Pyroscope.init({
-        serverAddress: 'http://localhost:4040',
+        serverAddress: process.env.PYROSCOPE_ENDPOINT,
         appName: process.env.OTEL_SERVICE_NAME,
         // Enable CPU time collection for wall profiles
         // This is required for CPU profiling functionality

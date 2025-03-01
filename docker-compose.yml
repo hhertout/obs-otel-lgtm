@@ -1,5 +1,16 @@
 services:
-  otel-collector:
+  otel-log-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-log-collector-config.yaml"]
+    volumes:
+      - ./conf/otel-log-collector-config.yaml:/etc/otel-log-collector-config.yaml
+      - /var/lib/docker:/var/lib/docker:ro
+    depends_on:
+      - otel-gateway
+    networks:
+      - observability
+
+  otel-gateway:
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
@@ -10,6 +21,7 @@ services:
     depends_on:
       - mimir
       - loki
+      - tempo
     networks:
       - observability
 
@@ -67,10 +79,10 @@ services:
     #   - "55681:55681"
     #   - "14250:14250"
     command: ["-config.file=/etc/tempo.yaml"]
-    networks:
-      - observability
     volumes:
       - "./conf/tempo.yaml:/etc/tempo.yaml"
+    networks:
+      - observability
 
   pyroscope:
     image: grafana/pyroscope:1.8.0
@@ -97,13 +109,15 @@ services:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     privileged: true
+    ports:
+      - "8080:8080"
     devices:
       - /dev/kmsg:/dev/kmsg
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
       - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/lib/docker:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     restart: unless-stopped
     networks:
@@ -125,9 +139,9 @@ services:
     networks:
       - observability
 
-networks:
-  observability:
-    driver: bridge
-
 volumes:
   grafana-data:
+
+networks:
+  observability:
+    external: true

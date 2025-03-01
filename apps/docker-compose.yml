@@ -1,0 +1,19 @@
+services:
+  node_app:
+    build:
+      context: ./node-app
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - observability
+    environment:
+      NODE_ENV: development
+      OTEL_LOG_ENABLED: true
+      OTEL_ENDPOINT: http://otel-gateway:4318
+      OTEL_SERVICE_NAME: node-app
+      PYROSCOPE_ENDPOINT: http://pyroscope:4040
+
+networks:
+  observability:
+    external: true

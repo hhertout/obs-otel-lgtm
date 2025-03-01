@@ -1,0 +1,35 @@
+receivers:
+  filelog:
+    include: ["/var/lib/docker/containers/*/*.log"]
+    start_at: end
+    operators:
+      - type: json_parser
+        id: parse-docker-logs
+        parse_from: attributes.log
+      - type: move
+        from: attributes.log
+        to: body
+      - type: move
+        from: attributes.container_id
+        to: resource.container_id
+      - type: move
+        from: attributes.container_name
+        to: resource.container_name
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 50
+
+exporters:
+  otlphttp/logs:
+    endpoint: "http://loki:3100/otlp"
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    logs:
+      receivers: [filelog]
+      processors: [batch]
+      exporters: [otlphttp/logs]
