@@ -5,8 +5,8 @@ services:
     volumes:
       - ./conf/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
-      - "4317:4317" # grpc
-      - "4318:4318" # http
+      - "4317:4317" # GRPC endpoint
+      - "4318:4318" # HTTP endpoint
     depends_on:
       - mimir
       - loki
@@ -48,7 +48,7 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     volumes:
       - "grafana-data:/var/lib/grafana"
-      - "./grafana/dasboards:/var/lib/grafana/dashboards"
+      - "./grafana/definitions:/var/lib/grafana/dashboards"
       - "./grafana/provisioning:/etc/grafana/provisioning"
     ports:
       - "3000:3000"
@@ -106,6 +106,22 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     restart: unless-stopped
+    networks:
+      - observability
+
+  k6:
+    build:
+      context: .
+      dockerfile: .docker/k6.dockerfile
+    environment:
+      - K6_OTEL_EXPORTER_TYPE=grpc
+      - K6_OTEL_GRPC_EXPORTER_ENDPOINT=otel-collector:4317
+      - K6_OTEL_GRPC_EXPORTER_INSECURE=true
+      - K6_OTEL_HTTP_EXPORTER_ENDPOINT=otel-collector:4318
+      - K6_OTEL_HTTP_EXPORTER_INSECURE=true
+      - DOCKER_DEFAULT_PLATFORM=linux/amd64
+    volumes:
+      - ./.k6:/tests
     networks:
       - observability
 
