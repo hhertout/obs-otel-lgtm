@@ -172,7 +172,7 @@ func InitPyroscope() *pyroscope.Profiler {
 		ApplicationName: os.Getenv("OTEL_SERVICE_NAME"),
 
 		// replace this with the address of pyroscope server
-		ServerAddress: "http://localhost:4040",
+		ServerAddress: os.Getenv("PYROSCOPE_ENDPOINT"),
 
 		// you can disable logging by setting this to nil
 		Logger: pyroscope.StandardLogger,
