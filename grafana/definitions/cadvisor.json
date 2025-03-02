@@ -352,7 +352,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 24,
         "x": 0,
         "y": 14
       },
@@ -453,9 +453,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 14
+        "w": 24,
+        "x": 0,
+        "y": 22
       },
       "id": 14,
       "options": {
@@ -495,7 +495,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 2,
       "panels": [
@@ -706,7 +706,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 31
       },
       "id": 19,
       "panels": [
@@ -730,8 +730,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -916,6 +915,6 @@
   "timezone": "",
   "title": "Docker overview",
   "uid": "pMEd7m0Mz",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
